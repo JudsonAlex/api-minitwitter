@@ -12,7 +12,8 @@ media
 celerybeat-schedule.* 
 
 # Environments 
-venv/ 
+venv/
+.env
 
 
 # Visual Studio Code # 
