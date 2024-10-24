@@ -2,7 +2,7 @@ from django.conf import settings
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter, SimpleRouter
 from users import urls as users_urls
-from posts import urls as posts_urls
+# from posts import urls as posts_urls
 from users.serializer import MyTokenObtainPairView
 
 if settings.DEBUG:
