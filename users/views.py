@@ -1,10 +1,11 @@
 from django.shortcuts import render
 from rest_framework import viewsets, permissions
 from rest_framework.response import Response
-from .models import User
-from .serializer import UserSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
+from .models import User, Follow
+from .serializer import UserSerializer, FollowSerializer
 from .serializer import MyTokenObtainPairSerializer
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 
@@ -31,5 +32,34 @@ class UserViewSet(viewsets.ModelViewSet):
     
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
+class FollowViewSet(viewsets.ModelViewSet):
+    permission_classes = (UserPermission,)
+    serializer_class = FollowSerializer
+    queryset = Follow.objects.none()
+
+    def create(self, request, *args, **kwargs):
+        follower = request.user
+        following = get_object_or_404(User, id=request.data.get('following'))
+
+        if not follower.id == following.id:
+            follow, created = Follow.objects.get_or_create(follower=follower, following=following)
+
+            if not created:
+                return Response({'message': "You already follow this user"})
+            
+            return Response({'message': f'{following.username} Followed successfull'})
+        
+        return Response({'message': 'Is not possible to follow yourself'})
+    
+    def destroy(self, request, *args, **kwargs):
+        follower = request.user
+        following = get_object_or_404(User, id=request.data.get('following'))
+
+        follow = get_object_or_404(Follow, follower=follower, following=following)
+        follow.delete()
+
+        return Response({"message": f'You unfollowed {following.username}'})
+
     
  

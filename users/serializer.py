@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import Token
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .models import User
+from .models import User, Follow
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'password')
+        fields = ('id', 'username', 'email', 'password', 'followers_count')
 
     
     def create(self, validated_data):
@@ -17,6 +17,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+    
+class FollowSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Follow
+        fields =('id', 'follower', 'following')
     
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
