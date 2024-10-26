@@ -3,6 +3,8 @@ from rest_framework import viewsets, permissions
 from rest_framework.response import Response
 from .models import User
 from .serializer import UserSerializer
+from rest_framework_simplejwt.views import TokenObtainPairView
+from .serializer import MyTokenObtainPairSerializer
 
 # Create your views here.
 
@@ -26,5 +28,8 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
+    
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
     
  
