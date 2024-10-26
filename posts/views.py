@@ -22,10 +22,13 @@ class PostViewSet(ModelViewSet):
         
         following_subquery = Follow.objects.filter(follower=user).values('following')
         queryset = Post.objects.filter(author__in=Subquery(following_subquery)).exclude(author=user)
-        
 
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+        
         serializer = self.get_serializer(queryset, many=True)
-        print(serializer)
         return Response(serializer.data)
     
 
