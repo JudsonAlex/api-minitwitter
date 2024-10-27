@@ -11,8 +11,8 @@ else:
     router = SimpleRouter()
 
 api_urlpatterns = [
-    path('users/', include(users_urls), name='users'),
-    path('posts/', include(posts_urls), name='posts'),
+    path('users/', include(users_urls, namespace='users')),
+    path('posts/', include(posts_urls, namespace='posts')),
     path('login/', MyTokenObtainPairView.as_view(), name='token_obtain_pair')
     
 

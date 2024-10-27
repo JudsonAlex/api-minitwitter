@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import viewsets, permissions
+from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .models import User, Follow
@@ -29,9 +29,11 @@ class UserViewSet(viewsets.ModelViewSet):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=201, headers=headers)
-    
+
+
 class MyTokenObtainPairView(TokenObtainPairView):
     serializer_class = MyTokenObtainPairSerializer
+
 
 class FollowViewSet(viewsets.ModelViewSet):
     permission_classes = (UserPermission,)
@@ -46,11 +48,11 @@ class FollowViewSet(viewsets.ModelViewSet):
             follow, created = Follow.objects.get_or_create(follower=follower, following=following)
 
             if not created:
-                return Response({'message': "You already follow this user"})
+                return Response({'message': "You already follow this user"}, status=status.HTTP_409_CONFLICT)
             
             return Response({'message': f'{following.username} Followed successfull'})
         
-        return Response({'message': 'Is not possible to follow yourself'})
+        return Response({'message': 'Is not possible to follow yourself'}, status=status.HTTP_409_CONFLICT)
     
     def destroy(self, request, *args, **kwargs):
         follower = request.user
