@@ -18,7 +18,7 @@ class UserPermission(permissions.IsAuthenticated):
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset =  User.objects.all()
+    queryset =  User.objects.all().order_by('-username')
     serializer_class = UserSerializer
     permission_classes = [UserPermission]
 

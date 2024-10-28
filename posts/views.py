@@ -21,7 +21,7 @@ class PostViewSet(ModelViewSet):
         user = self.request.user
         
         following_subquery = Follow.objects.filter(follower=user).values('following')
-        queryset = Post.objects.filter(author__in=Subquery(following_subquery)).exclude(author=user)
+        queryset = Post.objects.filter(author__in=Subquery(following_subquery)).exclude(author=user).order_by('created_at')
 
         page = self.paginate_queryset(queryset)
         if page is not None:
